@@ -5,6 +5,5 @@ package com.grayseal.microfictionapi.repository;
 import com.grayseal.microfictionapi.model.User;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository extends CrudRepository<User, Integer> {
-
+public interface UserRepository extends CrudRepository<User, Long> {
 }

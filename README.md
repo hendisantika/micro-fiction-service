@@ -32,6 +32,7 @@ The API documentation is generated using Springdoc OpenAPI. After running the ap
 - Spring Security
 - Springdoc OpenAPI
 - MySQL
+- Hibernate
 
 ## Configuration
 
