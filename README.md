@@ -16,7 +16,7 @@ The UML class diagram below illustrates the core entities of the service.
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your_username/microfiction-api.git`
+1. Clone the repository: `git clone https://github.com/lynnemunini/micro-fiction-api.git`
 2. Navigate to the project directory: `cd microfiction-api`
 3. Build the project: `mvn clean install`
 4. Run the application: `mvn spring-boot:run`
