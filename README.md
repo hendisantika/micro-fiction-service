@@ -1,4 +1,4 @@
-# Microfiction API (Under Development) 🚧
+# Microfiction Service (Under Development) 🚧
 
 The Microfiction API is a RESTful web service designed for writers to create, publish, and explore microfiction stories. Microfiction, also known as flash fiction or short-short stories, is a genre of fiction characterized by its brevity, typically consisting of narratives under 300 words.
 
@@ -18,22 +18,20 @@ The UML class diagram below illustrates the core entities of the service.
 
 1. Clone the repository: `git clone https://github.com/lynnemunini/micro-fiction-api.git`
 2. Navigate to the project directory: `cd microfiction-api`
-3. Build the project: `mvn clean install`
-4. Run the application: `mvn spring-boot:run`
+3. Start Docker Compose `docker-compose up -d`
 
 ## API Documentation
 
 The API documentation is generated using Springdoc OpenAPI. After running the application, you can access the Swagger UI at `http://localhost:8080/swagger-ui.html`.
 
-## Dependencies
+## Tools and Dependencies
 
-- Spring Boot
-- Spring Data JPA
-- Spring Security
-- Springdoc OpenAPI
-- MySQL
-- Hibernate
+The service relies on the following tools and dependencies:
 
-## Configuration
-
-The application configuration can be found in the `application.properties` file. You can customize database settings, logging, and other properties in this file.
+- **Docker Compose**: Simplifies the orchestration of multi-container applications.
+- **Spring Boot**: A powerful framework for building Java-based applications.
+- **Spring Data JPA**: Provides easy access to data persistence in relational databases with Java Persistence API (JPA).
+- **Spring Security**: Offers robust authentication and authorization features to secure the application.
+- **Springdoc OpenAPI**: Generates API documentation using OpenAPI specifications, facilitating API exploration and integration.
+- **MySQL**: A popular open-source relational database management system.
+- **Hibernate**: An object-relational mapping (ORM) framework for mapping Java objects to database tables and vice versa.
