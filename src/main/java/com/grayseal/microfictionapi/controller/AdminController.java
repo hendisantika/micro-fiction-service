@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.grayseal.microfictionapi.Utils.isValidRegistrationRequest;
 
-@RequestMapping("/api/users")
 @RestController
+@RequestMapping("/api/users")
 public class AdminController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
