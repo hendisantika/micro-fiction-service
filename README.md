@@ -22,7 +22,7 @@ The UML class diagram below illustrates the core entities of the service.
 
 ## API Documentation
 
-The API documentation is generated using Springdoc OpenAPI. After running the application, you can access the Swagger UI at `http://localhost:8080/swagger-ui.html`.
+The API documentation is generated using Springdoc OpenAPI. After running the application, you can access the Swagger UI at `http://localhost:8080/swagger-ui.html`. And the API docs at `http://localhost:8080/v3/api-docs`
 
 ## Tools and Dependencies
 
