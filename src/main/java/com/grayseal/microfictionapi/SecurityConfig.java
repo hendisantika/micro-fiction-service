@@ -39,7 +39,9 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.anyRequest().authenticated();
+                    authorize
+                            .requestMatchers("/api/users/register*").permitAll()
+                            .anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults()) // Configures HTTP Basic authentication with default settings
                 .csrf(csrf -> csrf.disable()) // Disables CSRF protection
