@@ -18,7 +18,7 @@ The UML class diagram below illustrates the core entities of the service.
 
 1. Clone the repository: `git clone https://github.com/lynnemunini/micro-fiction-api.git`
 2. Navigate to the project directory: `cd microfiction-api`
-3. Start Docker Compose `docker-compose up -d`
+3. Start Docker Compose `docker-compose up`
 
 ## API Documentation
 

@@ -5,7 +5,6 @@ import com.grayseal.microfictionapi.model.UserRegistrationRequest;
 import com.grayseal.microfictionapi.repository.UserRepository;
 import com.grayseal.microfictionapi.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +16,11 @@ import static com.grayseal.microfictionapi.Utils.isValidRegistrationRequest;
 @RequestMapping("/api/users")
 public class AdminController {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     private final UserService userService;
 
-    private AdminController(UserRepository userRepository, PasswordEncoder passwordEncoder, UserService userService) {
+    private AdminController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
     }
 

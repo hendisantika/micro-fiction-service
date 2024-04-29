@@ -4,18 +4,19 @@ import com.grayseal.microfictionapi.model.Role;
 import com.grayseal.microfictionapi.model.User;
 import com.grayseal.microfictionapi.model.UserRegistrationRequest;
 import com.grayseal.microfictionapi.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public boolean registerUser(UserRegistrationRequest registrationRequest) {
         if (userRepository.findByEmail(registrationRequest.getEmail()) == null) {

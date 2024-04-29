@@ -40,7 +40,9 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests((authorize) -> {
                     authorize
+                            .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
                             .requestMatchers("/api/users/register*").permitAll()
+                            .requestMatchers("/v3/api-docs").permitAll()
                             .anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults()) // Configures HTTP Basic authentication with default settings
