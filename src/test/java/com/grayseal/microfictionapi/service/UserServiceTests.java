@@ -1,7 +1,7 @@
 package com.grayseal.microfictionapi.service;
 
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserRegistrationRequest;
+import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public class UserServiceTests {
     void testCreateUser() {
         String email = "lynne@gmail.com";
         String password = "12345";
-        UserRegistrationRequest request = new UserRegistrationRequest(email, password);
+        UserCredentials request = new UserCredentials(email, password);
 
         // Mock the UserRepository behavior
         Mockito.when(userRepository.findByEmail(email)).thenReturn(null);

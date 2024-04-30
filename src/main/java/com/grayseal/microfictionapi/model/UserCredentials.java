@@ -1,13 +1,13 @@
 package com.grayseal.microfictionapi.model;
 
-public class UserRegistrationRequest {
+public class UserCredentials {
     private String email;
     private String password;
 
-    public UserRegistrationRequest() {
+    public UserCredentials() {
     }
 
-    public UserRegistrationRequest(String email, String password) {
+    public UserCredentials(String email, String password) {
         this.email = email;
         this.password = password;
     }

@@ -2,7 +2,7 @@ package com.grayseal.microfictionapi.service;
 
 import com.grayseal.microfictionapi.model.Role;
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserRegistrationRequest;
+import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +22,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Long registerUser(UserRegistrationRequest registrationRequest) {
+    public Long registerUser(UserCredentials registrationRequest) {
         if (userRepository.findByEmail(registrationRequest.getEmail()) == null) {
             User user = new User();
             user.setEmail(registrationRequest.getEmail());
@@ -34,7 +34,7 @@ public class UserService {
         return null;
     }
 
-    public boolean registerAdmin(UserRegistrationRequest registrationRequest) {
+    public boolean registerAdmin(UserCredentials registrationRequest) {
         if (userRepository.findByEmail(registrationRequest.getEmail()) == null) {
             User admin = new User();
             admin.setEmail(registrationRequest.getEmail());
@@ -67,7 +67,11 @@ public class UserService {
     }
 
     public User findUserByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
+        User user = userRepository.findByEmail(email);
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
     }
 
     public User findUserByEmail(String email) {

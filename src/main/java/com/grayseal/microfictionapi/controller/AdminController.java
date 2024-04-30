@@ -1,7 +1,7 @@
 package com.grayseal.microfictionapi.controller;
 
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserRegistrationRequest;
+import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.repository.UserRepository;
 import com.grayseal.microfictionapi.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class AdminController {
     }
 
     @PostMapping("/register-admin")
-    private ResponseEntity<String> createUser(@RequestBody UserRegistrationRequest registrationRequest) {
+    private ResponseEntity<String> createUser(@RequestBody UserCredentials registrationRequest) {
 
         if (!isValidRegistrationRequest(registrationRequest)) {
             return ResponseEntity.badRequest().body("Invalid registration request");

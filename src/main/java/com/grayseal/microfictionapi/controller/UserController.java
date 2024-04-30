@@ -1,7 +1,7 @@
 package com.grayseal.microfictionapi.controller;
 
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserRegistrationRequest;
+import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +19,12 @@ public class UserController {
 
     private final UserService userService;
 
-    private UserController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/register")
-    private ResponseEntity<String> createUser(@RequestBody UserRegistrationRequest registrationRequest, UriComponentsBuilder ucb) {
+    private ResponseEntity<String> createUser(@RequestBody UserCredentials registrationRequest, UriComponentsBuilder ucb) {
 
         if (!isValidRegistrationRequest(registrationRequest)) {
             return ResponseEntity.badRequest().body("Invalid registration request");
@@ -52,5 +52,15 @@ public class UserController {
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody UserCredentials credentials) {
+        User user = userService.findUserByEmailAndPassword(credentials.getEmail(), credentials.getPassword());
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

@@ -1,10 +1,10 @@
 package com.grayseal.microfictionapi.util;
 
-import com.grayseal.microfictionapi.model.UserRegistrationRequest;
+import com.grayseal.microfictionapi.model.UserCredentials;
 
 public class TextUtils {
 
-    public static boolean isValidRegistrationRequest(UserRegistrationRequest registrationRequest) {
+    public static boolean isValidRegistrationRequest(UserCredentials registrationRequest) {
         if (registrationRequest == null) {
             return false;
         }
