@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    private ResponseEntity<String> createUser(@RequestBody UserCredentials registrationRequest, UriComponentsBuilder ucb) {
+    public ResponseEntity<String> createUser(@RequestBody UserCredentials registrationRequest, UriComponentsBuilder ucb) {
 
         if (!isValidRegistrationRequest(registrationRequest)) {
             return ResponseEntity.badRequest().body("Invalid registration request");
@@ -45,8 +45,8 @@ public class UserController {
     }
 
     @GetMapping("/{requestedId}")
-    private ResponseEntity<User> findById(@PathVariable Long requestedId, Principal principal) {
-        if (principal != null) {
+    public ResponseEntity<User> findById(@PathVariable Long requestedId, Principal principal) {
+        if (principal != null && requestedId != null) {
             if (userService.existsById(requestedId)) {
                 var authenticatedUser = userService.findUserByEmail(principal.getName());
                 if (authenticatedUser != null && authenticatedUser.getId().equals(requestedId)) {
@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @GetMapping
-    private ResponseEntity<List<User>> findAll(Principal principal) {
+    public ResponseEntity<List<User>> findAllUsers(Principal principal) {
         if (principal != null) {
             List<User> users = userService.findAllUsers();
             return ResponseEntity.ok(users);
@@ -77,10 +77,12 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<Void> deleteUser(@PathVariable Long id, Principal principal) {
-        if (userService.existsById(id) && userService.findUserByEmail(principal.getName()).getId().equals(id)) {
-            userService.deleteUserById(id);
-            ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, Principal principal) {
+        if (id != null) {
+            if (userService.existsById(id) && userService.findUserByEmail(principal.getName()).getId().equals(id)) {
+                userService.deleteUserById(id);
+                return ResponseEntity.noContent().build();
+            }
         }
         return ResponseEntity.notFound().build();
     }
