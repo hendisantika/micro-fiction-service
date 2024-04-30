@@ -1,4 +1,4 @@
-package com.grayseal.microfictionapi;
+package com.grayseal.microfictionapi.configuration;
 
 import com.grayseal.microfictionapi.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;

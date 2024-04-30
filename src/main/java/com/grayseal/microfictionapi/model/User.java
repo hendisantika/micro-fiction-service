@@ -49,4 +49,14 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public User(Long id, String email, String password, Role role) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User() {
+    }
 }

@@ -1,8 +1,8 @@
-package com.grayseal.microfictionapi;
+package com.grayseal.microfictionapi.util;
 
 import com.grayseal.microfictionapi.model.UserRegistrationRequest;
 
-public class Utils {
+public class TextUtils {
 
     public static boolean isValidRegistrationRequest(UserRegistrationRequest registrationRequest) {
         if (registrationRequest == null) {
