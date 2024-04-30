@@ -22,16 +22,16 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean registerUser(UserRegistrationRequest registrationRequest) {
+    public Long registerUser(UserRegistrationRequest registrationRequest) {
         if (userRepository.findByEmail(registrationRequest.getEmail()) == null) {
             User user = new User();
             user.setEmail(registrationRequest.getEmail());
             user.setRole(Role.ROLE_USER);
             user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
             userRepository.save(user);
-            return true;
+            return user.getId();
         }
-        return false;
+        return null;
     }
 
     public boolean registerAdmin(UserRegistrationRequest registrationRequest) {
@@ -68,6 +68,10 @@ public class UserService {
 
     public User findUserByEmailAndPassword(String email, String password) {
         return userRepository.findByEmailAndPassword(email, password);
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public Boolean updateUser(String email, String password) {

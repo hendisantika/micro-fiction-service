@@ -32,21 +32,21 @@ public class UserServiceTests {
     }
 
     @Test
-    public void testCreateUser() {
+    void testCreateUser() {
         String email = "lynne@gmail.com";
         String password = "12345";
         UserRegistrationRequest request = new UserRegistrationRequest(email, password);
 
         // Mock the UserRepository behavior
-        Mockito.when(userRepository.findByEmail(email)).thenReturn(null); // Assuming user does not exist
+        Mockito.when(userRepository.findByEmail(email)).thenReturn(null);
 
         // Mock the PasswordEncoder behavior
         String encodedPassword = "encodedPassword";
         Mockito.when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 
-        Boolean result = userService.registerUser(request);
+        Long result = userService.registerUser(request);
 
-        assertThat(result).isTrue();
+        assertThat(result).isNotNull();
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User.class)); // Verify userRepository.save() is called once
     }
 }
