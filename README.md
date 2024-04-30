@@ -35,3 +35,4 @@ The service relies on the following tools and dependencies:
 - **Springdoc OpenAPI**: Generates API documentation using OpenAPI specifications, facilitating API exploration and integration.
 - **MySQL**: A popular open-source relational database management system.
 - **Hibernate**: An object-relational mapping (ORM) framework for mapping Java objects to database tables and vice versa.
+- **Mockito & JUnit**: Used for testing purposes
