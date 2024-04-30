@@ -10,6 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.List;
 
 import static com.grayseal.microfictionapi.util.TextUtils.isValidRegistrationRequest;
 
@@ -46,9 +47,11 @@ public class UserController {
     @GetMapping("/{requestedId}")
     private ResponseEntity<User> findById(@PathVariable Long requestedId, Principal principal) {
         if (principal != null) {
-            var authenticatedUser = userService.findUserByEmail(principal.getName());
-            if (authenticatedUser != null && authenticatedUser.getId().equals(requestedId)) {
-                return ResponseEntity.ok(authenticatedUser);
+            if (userService.existsById(requestedId)) {
+                var authenticatedUser = userService.findUserByEmail(principal.getName());
+                if (authenticatedUser != null && authenticatedUser.getId().equals(requestedId)) {
+                    return ResponseEntity.ok(authenticatedUser);
+                }
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -62,5 +65,23 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @GetMapping
+    private ResponseEntity<List<User>> findAll(Principal principal) {
+        if (principal != null) {
+            List<User> users = userService.findAllUsers();
+            return ResponseEntity.ok(users);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<Void> deleteUser(@PathVariable Long id, Principal principal) {
+        if (userService.existsById(id) && userService.findUserByEmail(principal.getName()).getId().equals(id)) {
+            userService.deleteUserById(id);
+            ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

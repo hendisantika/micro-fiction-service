@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -96,5 +97,29 @@ public class UserControllerTests {
         ResponseEntity<String> response = restTemplate
                 .postForEntity("/api/users/login", userCredentials, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldReturnAllUsersWhenListIsRequested() {
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("l@gmail.com", "password")
+                .getForEntity("/api/users", Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void shouldNotDeleteAnotherUser() {
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("l@gmail.com", "password")
+                .exchange("/api/users/1", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void shouldDeleteIfIdIsForAuthenticatedUser() {
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("l@gmail.com", "password")
+                .exchange("/api/users/4", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }
