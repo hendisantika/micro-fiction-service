@@ -4,6 +4,8 @@ import com.grayseal.microfictionapi.model.Story;
 import com.grayseal.microfictionapi.model.User;
 import com.grayseal.microfictionapi.service.StoryService;
 import com.grayseal.microfictionapi.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,8 +53,14 @@ public class StoryController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Story>> findAllUserStories(@PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    public ResponseEntity<List<Story>> findAllUserStories(@PathVariable Long userId, Pageable pageable, Principal principal) {
+        if (principal != null && userId != null) {
+            if (userService.existsById(userId)) {
+                Page<Story> stories = storyService.findAllStoriesByUser(userId, pageable);
+                return ResponseEntity.ok(stories.getContent());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping

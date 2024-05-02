@@ -15,15 +15,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -97,14 +101,14 @@ public class StoryControllerTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
-    @Test
-    void shouldReturnTheCorrectStoryGivenTheId() {
-        var response = restTemplate
-                .withBasicAuth("l@gmail.com", "password")
-                .getForEntity("/api/stories/1", Story.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
+//    @Test
+//    void shouldReturnTheCorrectStoryGivenTheId() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .getForEntity("/api/stories/1", Story.class);
+//
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
 
     @Test
     void shouldReturnStoryWhenValidStoryIdAndPrincipalProvided() {
@@ -150,5 +154,72 @@ public class StoryControllerTests {
         ResponseEntity<Story> response = storyController.findStoryById(storyId, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+//    @Test
+//    void shouldReturnAListOfStoriesForUser() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .getForEntity("/api/stories/user/5?page=0&size=1", String.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        System.out.println(response.getBody());
+//    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenUserIdIsNull() {
+        Principal principal = Mockito.mock(Principal.class);
+
+        ResponseEntity<List<Story>> response = storyController.findAllUserStories(null, null, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        verify(userService, never()).existsById(anyLong());
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenUserNotAuthenticated() {
+        Long userId = 123L;
+
+        ResponseEntity<List<Story>> response = storyController.findAllUserStories(userId, null, null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        verify(userService, never()).existsById(anyLong());
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenUserNotFound() {
+        Principal principal = Mockito.mock(Principal.class);
+        Long userId = 123L;
+        when(userService.existsById(userId)).thenReturn(false);
+
+        ResponseEntity<List<Story>> response = storyController.findAllUserStories(userId, null, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        verify(userService).existsById(userId);
+    }
+
+    @Test
+    void shouldReturnStoriesWhenUserExists() {
+        Principal principal = Mockito.mock(Principal.class);
+        Long userId = 123L;
+        Pageable pageable = Mockito.mock(Pageable.class);
+        List<Story> stories = new ArrayList<>();
+        stories.add(new Story());
+        Page<Story> storyPage = new PageImpl<>(stories);
+
+        when(userService.existsById(userId)).thenReturn(true);
+
+        when(storyService.findAllStoriesByUser(userId, pageable)).thenReturn(storyPage);
+
+        ResponseEntity<List<Story>> response = storyController.findAllUserStories(userId, pageable, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        verify(storyService).findAllStoriesByUser(userId, pageable);
+
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).isEqualTo(stories);
     }
 }

@@ -60,9 +60,8 @@ public class UserController {
         User serviceUserByEmailAndPassword = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
         if (serviceUserByEmailAndPassword != null) {
             return ResponseEntity.ok(serviceUserByEmailAndPassword);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping
