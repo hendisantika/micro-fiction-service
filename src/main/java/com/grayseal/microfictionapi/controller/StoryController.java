@@ -40,8 +40,14 @@ public class StoryController {
     }
 
     @GetMapping("/{storyId}")
-    public ResponseEntity<Story> findStoryById(@PathVariable Long storyId) {
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    public ResponseEntity<Story> findStoryById(@PathVariable Long storyId, Principal principal) {
+        if (principal != null && storyId != null) {
+            Story story = storyService.findStoryById(storyId);
+            if (story != null) {
+                return ResponseEntity.ok(story);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/user/{userId}")
