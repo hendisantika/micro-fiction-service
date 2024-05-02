@@ -64,8 +64,12 @@ public class StoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Story>> findAllStories() {
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    public ResponseEntity<List<Story>> findAllStories(Principal principal, Pageable pageable) {
+        if (principal != null) {
+            Page<Story> stories = storyService.findAllStories(pageable);
+            return ResponseEntity.ok(stories.getContent());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PutMapping("/{storyId}")

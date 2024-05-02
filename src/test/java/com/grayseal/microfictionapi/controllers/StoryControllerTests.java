@@ -222,4 +222,32 @@ public class StoryControllerTests {
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody()).isEqualTo(stories);
     }
+
+//    @Test
+//    void shouldReturnAListOfStoriesIfUserIsAuthenticated() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .getForEntity("/api/stories", String.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        System.out.println(response.getBody());
+//    }
+
+    @Test
+    void shouldReturnStoriesWhenPrincipalIsNotNull() {
+        Principal principal = Mockito.mock(Principal.class);
+        Pageable pageable = Mockito.mock(Pageable.class);
+        List<Story> storyList = new ArrayList<>();
+        storyList.add(new Story());
+        Page<Story> page = new PageImpl<>(storyList);
+
+        when(storyService.findAllStories(pageable)).thenReturn(page);
+
+        ResponseEntity<List<Story>> response = storyController.findAllStories(principal, pageable);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(storyList);
+        verify(storyService).findAllStories(pageable);
+    }
+
+
 }

@@ -4,11 +4,9 @@ import com.grayseal.microfictionapi.model.Story;
 import com.grayseal.microfictionapi.repository.StoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,8 +37,8 @@ public class StoryService {
         return page;
     }
 
-    public List<Story> findAllStories() {
-        return (List<Story>) storyRepository.findAll();
+    public Page<Story> findAllStories(Pageable pageable) {
+        return storyRepository.findAll(pageable);
     }
 
     public boolean existsById(Long storyId) {

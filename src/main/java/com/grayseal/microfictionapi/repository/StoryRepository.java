@@ -7,4 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface StoryRepository extends CrudRepository<Story, Long> {
     Page<Story> findByUserId(Long userId, Pageable pageable);
+    Page<Story> findAll(Pageable pageable);
 }
