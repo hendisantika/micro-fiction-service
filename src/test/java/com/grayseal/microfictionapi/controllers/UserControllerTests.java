@@ -3,7 +3,6 @@ package com.grayseal.microfictionapi.controllers;
 import com.grayseal.microfictionapi.controller.UserController;
 import com.grayseal.microfictionapi.model.Role;
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,9 +53,9 @@ public class UserControllerTests {
     @Test
     @DirtiesContext
     void shouldNotAllowInvalidEmails() {
-        UserCredentials wrongEmailRequest = new UserCredentials("test", "password");
+        User user = new User(1L, "test", "password", Role.ROLE_USER);
         ResponseEntity<String> createResponse = restTemplate
-                .postForEntity("/api/users/register", wrongEmailRequest, String.class);
+                .postForEntity("/api/users/register", user, String.class);
         assertThat(createResponse.getBody()).isEqualTo("Invalid registration request");
     }
 
@@ -127,15 +126,15 @@ public class UserControllerTests {
     @Test
     @DirtiesContext
     void shouldAllowLoginIfEmailAndPasswordAreCorrect() {
+        Long id = 1L;
         String email = "test@example.com";
         String password = "password123";
-        User testUser = new User();
-        testUser.setEmail(email);
-        testUser.setPassword(password);
+        Role role = Role.ROLE_USER;
+        User testUser = new User(id, email, password, role);
 
         when(userService.findUserByEmailAndPassword(email, password)).thenReturn(testUser);
 
-        ResponseEntity<User> response = userController.login(new UserCredentials(email, password));
+        ResponseEntity<User> response = userController.login(testUser);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -143,13 +142,15 @@ public class UserControllerTests {
     @Test
     @DirtiesContext
     void shouldNotAllowLoginIfEmailOrPasswordAreInCorrect() {
+        Long id = 1L;
         String email = "test@example.com";
         String password = "incorrectPassword";
+        Role role = Role.ROLE_USER;
 
         // Mock userService to return null, for invalid credentials
         when(userService.findUserByEmailAndPassword(email, password)).thenReturn(null);
 
-        ResponseEntity<User> response = userController.login(new UserCredentials(email, password));
+        ResponseEntity<User> response = userController.login(new User(id, email, password, role));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 

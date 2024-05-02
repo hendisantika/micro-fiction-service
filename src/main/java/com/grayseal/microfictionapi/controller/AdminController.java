@@ -1,7 +1,6 @@
 package com.grayseal.microfictionapi.controller;
 
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.repository.UserRepository;
 import com.grayseal.microfictionapi.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +16,10 @@ import static com.grayseal.microfictionapi.util.TextUtils.isValidRegistrationReq
 @RestController
 @RequestMapping("/api/users")
 public class AdminController {
-    private final UserRepository userRepository;
 
     private final UserService userService;
 
-    private AdminController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
+    private AdminController(UserService userService) {
         this.userService = userService;
     }
 

@@ -1,6 +1,8 @@
 package com.grayseal.microfictionapi.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.Date;
 
@@ -14,6 +16,17 @@ public class Story {
     private String title;
 
     private String content;
+
+    public Story(Long id, String title, String content, Long userId, Date creationDate) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.userId = userId;
+        this.creationDate = creationDate;
+    }
+
+    public Story() {
+    }
 
     private Long userId;
 

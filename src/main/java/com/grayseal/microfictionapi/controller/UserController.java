@@ -1,7 +1,6 @@
 package com.grayseal.microfictionapi.controller;
 
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,10 +56,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody UserCredentials credentials) {
-        User user = userService.findUserByEmailAndPassword(credentials.getEmail(), credentials.getPassword());
-        if (user != null) {
-            return ResponseEntity.ok(user);
+    public ResponseEntity<User> login(@RequestBody User user) {
+        User serviceUserByEmailAndPassword = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
+        if (serviceUserByEmailAndPassword != null) {
+            return ResponseEntity.ok(serviceUserByEmailAndPassword);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
