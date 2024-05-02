@@ -5,7 +5,6 @@ import com.grayseal.microfictionapi.repository.StoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,13 +18,7 @@ public class StoryService {
         this.storyRepository = storyRepository;
     }
 
-    public Story createStory(String title, String content, Long userId) {
-        Story story = new Story();
-        story.setTitle(title);
-        story.setContent(content);
-        story.setUserId(userId);
-        story.setCreationDate(new Date());
-
+    public Story createStory(Story story) {
         return storyRepository.save(story);
     }
 

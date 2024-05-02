@@ -2,7 +2,6 @@ package com.grayseal.microfictionapi.service;
 
 import com.grayseal.microfictionapi.model.Role;
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,28 +22,24 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Long registerUser(UserCredentials registrationRequest) {
-        if (userRepository.findByEmail(registrationRequest.getEmail()) == null) {
-            User user = new User();
-            user.setEmail(registrationRequest.getEmail());
+    public User registerUser(User user) {
+        if (userRepository.findByEmail(user.getEmail()) == null) {
             user.setRole(Role.ROLE_USER);
-            user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
-            return user.getId();
+            return user;
         }
         return null;
     }
 
-    public boolean registerAdmin(UserCredentials registrationRequest) {
-        if (userRepository.findByEmail(registrationRequest.getEmail()) == null) {
-            User admin = new User();
-            admin.setEmail(registrationRequest.getEmail());
-            admin.setRole(Role.ROLE_ADMIN);
-            admin.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-            userRepository.save(admin);
-            return true;
+    public User registerAdmin(User user) {
+        if (userRepository.findByEmail(user.getEmail()) == null) {
+            user.setRole(Role.ROLE_ADMIN);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+            return user;
         }
-        return false;
+        return null;
     }
 
     public boolean deleteUserById(Long userId) {

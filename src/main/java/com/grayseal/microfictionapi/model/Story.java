@@ -9,7 +9,6 @@ import java.util.Date;
 public class Story {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;

@@ -1,17 +1,17 @@
 package com.grayseal.microfictionapi.util;
 
-import com.grayseal.microfictionapi.model.UserCredentials;
+import com.grayseal.microfictionapi.model.User;
 
 public class TextUtils {
 
-    public static boolean isValidRegistrationRequest(UserCredentials registrationRequest) {
-        if (registrationRequest == null) {
+    public static boolean isValidRegistrationRequest(User user) {
+        if (user == null) {
             return false;
         }
-        if (registrationRequest.getEmail() == null || !isValidEmail(registrationRequest.getEmail())) {
+        if (user.getEmail() == null || !isValidEmail(user.getEmail())) {
             return false;
         }
-        return registrationRequest.getPassword() != null;
+        return user.getPassword() != null;
     }
 
     private static boolean isValidEmail(String email) {

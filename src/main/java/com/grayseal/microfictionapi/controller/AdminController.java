@@ -1,7 +1,6 @@
 package com.grayseal.microfictionapi.controller;
 
 import com.grayseal.microfictionapi.model.User;
-import com.grayseal.microfictionapi.model.UserCredentials;
 import com.grayseal.microfictionapi.repository.UserRepository;
 import com.grayseal.microfictionapi.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 import static com.grayseal.microfictionapi.util.TextUtils.isValidRegistrationRequest;
 
@@ -25,20 +27,21 @@ public class AdminController {
     }
 
     @PostMapping("/register-admin")
-    private ResponseEntity<String> createAdmin(@RequestBody UserCredentials registrationRequest) {
+    private ResponseEntity<String> createAdmin(@RequestBody User admin, UriComponentsBuilder ucb) {
 
-        if (!isValidRegistrationRequest(registrationRequest)) {
+        if (!isValidRegistrationRequest(admin)) {
             return ResponseEntity.badRequest().body("Invalid registration request");
         }
-        // Validate user data (e.g., email format, password strength)
-        User existingUser = userRepository.findByEmail(registrationRequest.getEmail());
-        if (existingUser != null) {
-            return ResponseEntity.badRequest().body("Admin already exists");
+
+        if (userService.findUserByEmail(admin.getEmail()) != null) {
+            return ResponseEntity.badRequest().body("Email already exists");
         }
 
-        if (userService.registerAdmin(registrationRequest)) {
-            return ResponseEntity.ok("User created successfully");
+        if (admin.getId() != null) {
+            userService.registerAdmin(admin);
+            URI uri = ucb.path("/api/users/{id}").buildAndExpand(admin.getId()).toUri();
+            return ResponseEntity.created(uri).build();
         }
-        return ResponseEntity.badRequest().body("Something went wrong!");
+        return ResponseEntity.badRequest().body("Something went wrong");
     }
 }

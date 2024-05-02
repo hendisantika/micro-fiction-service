@@ -25,20 +25,19 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> createUser(@RequestBody UserCredentials registrationRequest, UriComponentsBuilder ucb) {
+    public ResponseEntity<String> createUser(@RequestBody User user, UriComponentsBuilder ucb) {
 
-        if (!isValidRegistrationRequest(registrationRequest)) {
+        if (!isValidRegistrationRequest(user)) {
             return ResponseEntity.badRequest().body("Invalid registration request");
         }
 
-        User existingUser = userService.findUserByEmail(registrationRequest.getEmail());
-        if (existingUser != null) {
+        if (userService.findUserByEmail(user.getEmail()) != null) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
 
-        Long userId = userService.registerUser(registrationRequest);
-        if (userId != null) {
-            URI uri = ucb.path("/api/users/{id}").buildAndExpand(userId).toUri();
+        if (user.getId() != null) {
+            userService.registerUser(user);
+            URI uri = ucb.path("/api/users/{id}").buildAndExpand(user.getId()).toUri();
             return ResponseEntity.created(uri).build();
         }
         return ResponseEntity.badRequest().body("Something went wrong");

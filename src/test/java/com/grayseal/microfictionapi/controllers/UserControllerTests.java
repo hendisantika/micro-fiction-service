@@ -63,34 +63,33 @@ public class UserControllerTests {
     @Test
     @DirtiesContext
     void shouldCreateANewUserIfDetailsAreValid() {
-        UserCredentials request = new UserCredentials("test@example.com", "password");
-        when(userService.registerUser(request)).thenReturn(1L);
+        User user = new User(1L, "test@example.com", "password", Role.ROLE_USER);
+        when(userService.registerUser(user)).thenReturn(user);
 
         URI expectedUri = URI.create("/api/users/1");
         when(uriComponentsBuilder.path("/api/users/{id}")).thenReturn(uriComponentsBuilder);
         when(uriComponentsBuilder.buildAndExpand(1L)).thenReturn(uriComponents);
         when(uriComponentsBuilder.buildAndExpand(1L).toUri()).thenReturn(expectedUri);
 
-        ResponseEntity<String> response = userController.createUser(request, uriComponentsBuilder);
+        ResponseEntity<String> response = userController.createUser(user, uriComponentsBuilder);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getHeaders().getLocation()).isEqualTo(expectedUri);
-        verify(userService).registerUser(request);
+        verify(userService).registerUser(user);
     }
 
     @Test
     @DirtiesContext
     void shouldNotCreateUserIfEmailExists() {
-        UserCredentials request = new UserCredentials("existing@example.com", "password");
-        User existingUser = new User(1L, "Existing User", "existing@example.com", Role.ROLE_USER);
+        User existingUser = new User(1L, "existing@example.com", "password", Role.ROLE_USER);
 
         when(userService.findUserByEmail("existing@example.com")).thenReturn(existingUser);
 
-        ResponseEntity<String> response = userController.createUser(request, uriComponentsBuilder);
+        ResponseEntity<String> response = userController.createUser(existingUser, uriComponentsBuilder);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).isEqualTo("Email already exists");
-        verify(userService, never()).registerUser(request);
+        verify(userService, never()).registerUser(existingUser);
     }
 
     @Test
