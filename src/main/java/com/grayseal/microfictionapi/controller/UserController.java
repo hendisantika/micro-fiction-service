@@ -2,6 +2,12 @@ package com.grayseal.microfictionapi.controller;
 
 import com.grayseal.microfictionapi.model.User;
 import com.grayseal.microfictionapi.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +21,7 @@ import static com.grayseal.microfictionapi.util.TextUtils.isValidRegistrationReq
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "Users", description = "Endpoints for managing users")
 public class UserController {
 
     private final UserService userService;
@@ -23,7 +30,10 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Register a new user")
     @PostMapping("/register")
+    @ApiResponse(responseCode = "201", description = "User registered successfully")
+    @ApiResponse(responseCode = "400", description = "Bad request")
     public ResponseEntity<String> createUser(@RequestBody User user, UriComponentsBuilder ucb) {
 
         if (!isValidRegistrationRequest(user)) {
@@ -42,7 +52,10 @@ public class UserController {
         return ResponseEntity.badRequest().body("Something went wrong");
     }
 
+    @Operation(summary = "Retrieve a user by ID")
     @GetMapping("/{requestedId}")
+    @ApiResponse(responseCode = "200", description = "User found", content = @Content(schema = @Schema(implementation = User.class)))
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<User> findUserById(@PathVariable Long requestedId, Principal principal) {
         if (principal != null && requestedId != null) {
             if (userService.existsById(requestedId)) {
@@ -55,7 +68,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @Operation(summary = "Login user")
     @PostMapping("/login")
+    @ApiResponse(responseCode = "200", description = "User logged in successfully", content = @Content(schema = @Schema(implementation = User.class)))
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<User> login(@RequestBody User user) {
         User serviceUserByEmailAndPassword = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
         if (serviceUserByEmailAndPassword != null) {
@@ -64,7 +80,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @Operation(summary = "Retrieve all users")
     @GetMapping
+    @ApiResponse(responseCode = "200", description = "Users found", content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class))))
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<List<User>> findAllUsers(Principal principal) {
         if (principal != null) {
             List<User> users = userService.findAllUsers();
@@ -73,7 +92,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @Operation(summary = "Delete a user")
     @DeleteMapping("/{id}")
+    @ApiResponse(responseCode = "204", description = "User deleted successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id, Principal principal) {
         if (id != null) {
             if (userService.existsById(id) && userService.findUserByEmail(principal.getName()).getId().equals(id)) {

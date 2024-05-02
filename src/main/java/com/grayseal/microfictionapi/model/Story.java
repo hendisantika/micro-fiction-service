@@ -1,5 +1,6 @@
 package com.grayseal.microfictionapi.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -11,11 +12,20 @@ import java.util.Date;
 public class Story {
 
     @Id
+    @Schema(description = "The unique identifier of the story")
     private Long id;
 
+    @Schema(description = "The title of the story")
     private String title;
 
+    @Schema(description = "The content of the story")
     private String content;
+
+    @Schema(description = "The ID of the user who created the story")
+    private Long userId;
+
+    @Schema(description = "The date when the story was created")
+    private Date creationDate;
 
     public Story(Long id, String title, String content, Long userId, Date creationDate) {
         this.id = id;
@@ -27,10 +37,6 @@ public class Story {
 
     public Story() {
     }
-
-    private Long userId;
-
-    private Date creationDate;
 
     public Long getId() {
         return id;

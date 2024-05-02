@@ -1,5 +1,6 @@
 package com.grayseal.microfictionapi.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 @Entity
@@ -7,15 +8,20 @@ import jakarta.persistence.*;
 public class User {
 
     @Id
+    @Schema(description = "The unique identifier of the user")
     private Long id;
 
+    @Schema(description = "The email address of the user")
     private String email;
 
+    @Schema(description = "The password of the user")
     private String password;
 
     //ROLE will be stored as String in DB
     @Enumerated(EnumType.STRING)
+    @Schema(description = "The role of the user")
     private Role role;
+
 
     public Long getId() {
         return id;

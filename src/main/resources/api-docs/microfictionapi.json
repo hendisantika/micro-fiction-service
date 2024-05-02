@@ -11,6 +11,98 @@
     }
   ],
   "paths": {
+    "/api/stories/{storyId}": {
+      "get": {
+        "tags": [
+          "story-controller"
+        ],
+        "operationId": "findStoryById",
+        "parameters": [
+          {
+            "name": "storyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Story"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "story-controller"
+        ],
+        "operationId": "updateStory",
+        "parameters": [
+          {
+            "name": "storyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Story"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Story"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "story-controller"
+        ],
+        "operationId": "deleteStory",
+        "parameters": [
+          {
+            "name": "storyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/users/register": {
       "post": {
         "tags": [
@@ -21,7 +113,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserCredentials"
+                "$ref": "#/components/schemas/User"
               }
             }
           },
@@ -46,12 +138,12 @@
         "tags": [
           "admin-controller"
         ],
-        "operationId": "createUser_1",
+        "operationId": "createAdmin",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserCredentials"
+                "$ref": "#/components/schemas/User"
               }
             }
           },
@@ -81,7 +173,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserCredentials"
+                "$ref": "#/components/schemas/User"
               }
             }
           },
@@ -101,12 +193,42 @@
         }
       }
     },
+    "/api/stories/create": {
+      "post": {
+        "tags": [
+          "story-controller"
+        ],
+        "operationId": "createStory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Story"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Story"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
           "user-controller"
         ],
-        "operationId": "findAll",
+        "operationId": "findAllUsers",
         "responses": {
           "200": {
             "description": "OK",
@@ -129,7 +251,7 @@
         "tags": [
           "user-controller"
         ],
-        "operationId": "findById",
+        "operationId": "findUserById",
         "parameters": [
           {
             "name": "requestedId",
@@ -154,18 +276,129 @@
           }
         }
       }
+    },
+    "/api/stories": {
+      "get": {
+        "tags": [
+          "story-controller"
+        ],
+        "operationId": "findAllStories",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Story"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stories/user/{userId}": {
+      "get": {
+        "tags": [
+          "story-controller"
+        ],
+        "operationId": "findAllUserStories",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Story"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "delete": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "UserCredentials": {
+      "Story": {
         "type": "object",
         "properties": {
-          "email": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
             "type": "string"
           },
-          "password": {
+          "content": {
             "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -188,6 +421,27 @@
               "ROLE_USER",
               "ROLE_ADMIN"
             ]
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

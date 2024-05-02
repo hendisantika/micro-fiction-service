@@ -1,5 +1,6 @@
 package com.grayseal.microfictionapi.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,12 +9,16 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "The unique identifier of the comment")
     private Long id;
 
+    @Schema(description = "The content of the comment")
     private String content;
 
+    @Schema(description = "The ID of the user who created the comment")
     private Long userId;
 
+    @Schema(description = "The ID of the story associated with the comment")
     private Long storyId;
 
     public String getContent() {

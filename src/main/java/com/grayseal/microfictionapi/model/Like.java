@@ -1,5 +1,6 @@
 package com.grayseal.microfictionapi.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,10 +9,13 @@ public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "The unique identifier of the like")
     private Long id;
 
+    @Schema(description = "The ID of the user who liked the story")
     private Long userId;
 
+    @Schema(description = "The ID of the story that was liked")
     private Long storyId;
 
     public Long getUserId() {
