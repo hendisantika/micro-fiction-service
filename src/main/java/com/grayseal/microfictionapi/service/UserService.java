@@ -64,7 +64,7 @@ public class UserService {
     }
 
     public List<User> findAllUsers() {
-        return userRepository.findAll();
+        return (List<User>) userRepository.findAll();
     }
 
     public User findUserByEmailAndPassword(String email, String password) {
@@ -83,13 +83,12 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public Boolean updateUser(String email, String password) {
+    public User updateUser(String email, String password) {
         User user = userRepository.findByEmail(email);
         if (user != null) {
             user.setPassword(passwordEncoder.encode(password));
-            userRepository.save(user);
-            return true;
+            return userRepository.save(user);
         }
-        return false;
+        return null;
     }
 }

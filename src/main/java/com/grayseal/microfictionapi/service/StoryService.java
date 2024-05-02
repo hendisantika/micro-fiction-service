@@ -1,0 +1,68 @@
+package com.grayseal.microfictionapi.service;
+
+import com.grayseal.microfictionapi.model.Story;
+import com.grayseal.microfictionapi.repository.StoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class StoryService {
+
+    private final StoryRepository storyRepository;
+
+    @Autowired
+    public StoryService(StoryRepository storyRepository) {
+        this.storyRepository = storyRepository;
+    }
+
+    public Story createStory(String title, String content, Long userId) {
+        Story story = new Story();
+        story.setTitle(title);
+        story.setContent(content);
+        story.setUserId(userId);
+        story.setCreationDate(new Date());
+
+        return storyRepository.save(story);
+    }
+
+    public Story findStoryById(Long storyId) {
+        Optional<Story> optionalStory = storyRepository.findById(storyId);
+        return optionalStory.orElse(null);
+    }
+
+    public List<Story> findAllStoriesByUser(Long userId) {
+        return storyRepository.findAllByUserId(userId);
+    }
+
+    public List<Story> findAllStories() {
+        return (List<Story>) storyRepository.findAll();
+    }
+
+    public boolean existsById(Long storyId) {
+        return storyRepository.existsById(storyId);
+    }
+
+    public Story updateStory(Long storyId, String title, String content) {
+        Optional<Story> optionalStory = storyRepository.findById(storyId);
+        if (optionalStory.isPresent()) {
+            Story story = optionalStory.get();
+            story.setTitle(title);
+            story.setContent(content);
+            return storyRepository.save(story);
+        }
+        return null;
+    }
+
+    public boolean deleteStory(Long storyId) {
+        Optional<Story> optionalStory = storyRepository.findById(storyId);
+        if (optionalStory.isPresent()) {
+            storyRepository.deleteById(storyId);
+            return true;
+        }
+        return false;
+    }
+}

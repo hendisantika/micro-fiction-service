@@ -101,7 +101,7 @@ public class UserControllerTests {
         when(userService.existsById(requestedId)).thenReturn(true);
         when(userService.findUserByEmail("authenticatedUser")).thenReturn(new User(1L, "authenticatedUser", "password", Role.ROLE_USER));
 
-        ResponseEntity<User> response = userController.findById(requestedId, principal);
+        ResponseEntity<User> response = userController.findUserById(requestedId, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         verify(userService).existsById(requestedId);
@@ -117,7 +117,7 @@ public class UserControllerTests {
         User authenticatedUser = new User(requestedId, "authenticatedUser", "password", Role.ROLE_USER);
         when(userService.findUserByEmail("authenticatedUser")).thenReturn(authenticatedUser);
 
-        ResponseEntity<User> response = userController.findById(requestedId, principal);
+        ResponseEntity<User> response = userController.findUserById(requestedId, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(authenticatedUser);

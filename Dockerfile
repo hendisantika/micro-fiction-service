@@ -24,5 +24,4 @@ RUN mvn package -DskipTests
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "target/microfiction.jar"]
-
-# Trigger full rebuild - TIMESTAMP: 2024-04-27 12:00:00
+# Trigger full rebuild

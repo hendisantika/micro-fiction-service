@@ -25,7 +25,7 @@ public class AdminController {
     }
 
     @PostMapping("/register-admin")
-    private ResponseEntity<String> createUser(@RequestBody UserCredentials registrationRequest) {
+    private ResponseEntity<String> createAdmin(@RequestBody UserCredentials registrationRequest) {
 
         if (!isValidRegistrationRequest(registrationRequest)) {
             return ResponseEntity.badRequest().body("Invalid registration request");

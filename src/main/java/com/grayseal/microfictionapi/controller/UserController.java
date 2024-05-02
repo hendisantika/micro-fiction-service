@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @GetMapping("/{requestedId}")
-    public ResponseEntity<User> findById(@PathVariable Long requestedId, Principal principal) {
+    public ResponseEntity<User> findUserById(@PathVariable Long requestedId, Principal principal) {
         if (principal != null && requestedId != null) {
             if (userService.existsById(requestedId)) {
                 var authenticatedUser = userService.findUserByEmail(principal.getName());
