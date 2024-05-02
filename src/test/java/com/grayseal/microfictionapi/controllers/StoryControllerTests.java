@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -332,5 +333,102 @@ public class StoryControllerTests {
         verify(storyService).updateStory(storyId, updatedStory);
     }
 
+//    @Test
+//    void shouldDeleteStoryIfStoryBelongsToUser() {
+//        ResponseEntity<Void> response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .exchange("/api/stories/1", HttpMethod.DELETE, null, Void.class);
+//
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+//    }
 
+    @Test
+    void shouldReturnNotFoundIfPrincipalIsNull() {
+        Long storyId = 1L;
+        Principal principal = null;
+
+        ResponseEntity<Void> response = storyController.deleteStory(storyId, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        verifyNoInteractions(storyService);
+    }
+
+    @Test
+    void shouldReturnNotFoundIfStoryIdIsNull() {
+        Principal principal = Mockito.mock(Principal.class);
+
+        ResponseEntity<Void> response = storyController.deleteStory(null, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        verifyNoInteractions(storyService);
+    }
+
+    @Test
+    void shouldReturnNotFoundIfStoryNotFound() {
+        Long storyId = 1L;
+        Principal principal = Mockito.mock(Principal.class);
+        when(storyService.existsById(storyId)).thenReturn(false);
+
+        ResponseEntity<Void> response = storyController.deleteStory(storyId, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        verify(storyService).existsById(storyId);
+        verifyNoMoreInteractions(storyService);
+    }
+
+    @Test
+    void shouldReturnNotFoundIfUserNotFound() {
+        Long storyId = 1L;
+        Principal principal = Mockito.mock(Principal.class);
+        when(storyService.existsById(storyId)).thenReturn(true);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(null);
+
+        ResponseEntity<Void> response = storyController.deleteStory(storyId, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        verify(storyService).existsById(storyId);
+        verify(userService).findUserByEmail(principal.getName());
+    }
+
+    @Test
+    @DirtiesContext
+    void shouldReturnNotFoundIfStoryUserMismatch() {
+        Long storyId = 1L;
+        Principal principal = Mockito.mock(Principal.class);
+        User user = new User();
+        user.setId(2L);
+        Story story = new Story();
+        story.setUserId(user.getId());
+        when(storyService.existsById(storyId)).thenReturn(true);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+        when(storyService.findStoryById(storyId)).thenReturn(story);
+
+        ResponseEntity<Void> response = storyController.deleteStory(storyId, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(storyService).existsById(storyId);
+        verify(userService).findUserByEmail(principal.getName());
+        verify(storyService).findStoryById(storyId);
+    }
+
+    @Test
+    void shouldDeleteStorySuccessfully() {
+        Long storyId = 1L;
+        Principal principal = Mockito.mock(Principal.class);
+        User user = new User();
+        user.setId(1L);
+        Story story = new Story();
+        story.setUserId(user.getId());
+        when(storyService.existsById(storyId)).thenReturn(true);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+        when(storyService.findStoryById(storyId)).thenReturn(story);
+
+        ResponseEntity<Void> response = storyController.deleteStory(storyId, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(storyService).existsById(storyId);
+        verify(userService).findUserByEmail(principal.getName());
+        verify(storyService).findStoryById(storyId);
+        verify(storyService).deleteStory(storyId);
+    }
 }

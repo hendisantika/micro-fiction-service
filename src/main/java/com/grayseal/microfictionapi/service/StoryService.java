@@ -58,12 +58,10 @@ public class StoryService {
         return null;
     }
 
-    public boolean deleteStory(Long storyId) {
+    public void deleteStory(Long storyId) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
         if (optionalStory.isPresent()) {
             storyRepository.deleteById(storyId);
-            return true;
         }
-        return false;
     }
 }

@@ -87,8 +87,17 @@ public class StoryController {
     }
 
     @DeleteMapping("/{storyId}")
-    public ResponseEntity<Void> deleteStory(@PathVariable Long storyId) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Void> deleteStory(@PathVariable Long storyId, Principal principal) {
+        if (principal != null & storyId != null) {
+            User user = userService.findUserByEmail(principal.getName());
+            if (storyService.existsById(storyId)) {
+                Story story = storyService.findStoryById(storyId);
+                if (story != null && story.getUserId().equals(user.getId())) {
+                    storyService.deleteStory(storyId);
+                    return ResponseEntity.noContent().build();
+                }
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
-
 }
