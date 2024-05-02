@@ -19,8 +19,11 @@ public class StoryService {
     }
 
     public Story createStory(Story story) {
-        storyRepository.save(story);
-        return story;
+        if (story != null) {
+            storyRepository.save(story);
+            return story;
+        }
+        return null;
     }
 
     public Story findStoryById(Long storyId) {

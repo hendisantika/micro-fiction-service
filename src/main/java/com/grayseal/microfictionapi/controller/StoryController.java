@@ -27,10 +27,12 @@ public class StoryController {
     public ResponseEntity<Story> createStory(@RequestBody Story story, Principal principal) {
         if (principal != null && story != null) {
             User user = userService.findUserByEmail(principal.getName());
-            if (user.getId().equals(story.getUserId())) {
-                Story createdStory = storyService.createStory(story);
-                if (createdStory != null) {
-                    return ResponseEntity.status(HttpStatus.CREATED).body(createdStory);
+            if (user != null) {
+                if (user.getId().equals(story.getUserId())) {
+                    Story createdStory = storyService.createStory(story);
+                    if (createdStory != null) {
+                        return ResponseEntity.status(HttpStatus.CREATED).body(createdStory);
+                    }
                 }
             }
         }
