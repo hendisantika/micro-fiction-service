@@ -73,8 +73,17 @@ public class StoryController {
     }
 
     @PutMapping("/{storyId}")
-    public ResponseEntity<Story> updateStory(@PathVariable Long storyId, @RequestBody Story updatedStory) {
-        return ResponseEntity.status(HttpStatus.OK).body(updatedStory);
+    public ResponseEntity<Story> updateStory(@PathVariable Long storyId, @RequestBody Story updatedStory, Principal principal) {
+        if (principal != null && storyId != null) {
+            User user = userService.findUserByEmail(principal.getName());
+            if (user != null && user.getId().equals(updatedStory.getUserId())) {
+                var story = storyService.updateStory(storyId, updatedStory);
+                if (story != null) {
+                    return ResponseEntity.ok(story);
+                }
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @DeleteMapping("/{storyId}")

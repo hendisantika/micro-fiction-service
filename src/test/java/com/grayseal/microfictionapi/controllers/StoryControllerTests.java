@@ -249,5 +249,88 @@ public class StoryControllerTests {
         verify(storyService).findAllStories(pageable);
     }
 
+//    @Test
+//    void shouldUpdateAStorySuccessfully() {
+//        Story story = new Story(1L, "Some New Title", "Some new content", 5L, new Date());
+//        HttpEntity<Story> request = new HttpEntity<>(story);
+//        ResponseEntity<Story> response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .exchange("/api/stories/1", HttpMethod.PUT, request, Story.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+
+    @Test
+    void shouldReturnUnauthorizedIfPrincipalIsNullInStoryUpdate() {
+        Long storyId = 1L;
+        Story updatedStory = new Story();
+        Principal principal = null;
+
+        ResponseEntity<Story> response = storyController.updateStory(storyId, updatedStory, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        verifyNoInteractions(storyService);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedIfStoryIdIsNull() {
+        Story updatedStory = new Story();
+        Principal principal = Mockito.mock(Principal.class);
+
+        ResponseEntity<Story> response = storyController.updateStory(null, updatedStory, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        verifyNoInteractions(storyService);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedIfUserNotFoundInStoryUpdate() {
+        Long storyId = 1L;
+        Story updatedStory = new Story();
+        Principal principal = Mockito.mock(Principal.class);
+        lenient().when(userService.findUserByEmail(anyString())).thenReturn(null);
+
+        ResponseEntity<Story> response = storyController.updateStory(storyId, updatedStory, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        verify(userService).findUserByEmail(principal.getName());
+        verifyNoInteractions(storyService);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedIfUserIdMismatchInStoryUpdate() {
+        Long storyId = 1L;
+        Story updatedStory = new Story();
+        updatedStory.setUserId(2L);
+        Principal principal = Mockito.mock(Principal.class);
+        User user = new User();
+        user.setId(1L);
+        lenient().when(userService.findUserByEmail(anyString())).thenReturn(user);
+
+        ResponseEntity<Story> response = storyController.updateStory(storyId, updatedStory, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        verify(userService).findUserByEmail(principal.getName());
+        verifyNoInteractions(storyService);
+    }
+
+    @Test
+    void shouldReturnStoryWhenUpdatedSuccessfully() {
+        Long storyId = 1L;
+        Story updatedStory = new Story();
+        updatedStory.setUserId(1L);
+        Principal principal = Mockito.mock(Principal.class);
+        User user = new User();
+        user.setId(1L);
+        lenient().when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+        when(storyService.updateStory(storyId, updatedStory)).thenReturn(updatedStory);
+
+        ResponseEntity<Story> response = storyController.updateStory(storyId, updatedStory, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(updatedStory);
+        verify(userService).findUserByEmail(principal.getName());
+        verify(storyService).updateStory(storyId, updatedStory);
+    }
+
 
 }

@@ -45,12 +45,14 @@ public class StoryService {
         return storyRepository.existsById(storyId);
     }
 
-    public Story updateStory(Long storyId, String title, String content) {
+    public Story updateStory(Long storyId, Story updatedStory) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
         if (optionalStory.isPresent()) {
             Story story = optionalStory.get();
-            story.setTitle(title);
-            story.setContent(content);
+            story.setTitle(updatedStory.getTitle());
+            story.setContent(updatedStory.getContent());
+            story.setUserId(updatedStory.getUserId());
+            story.setCreationDate(updatedStory.getCreationDate());
             return storyRepository.save(story);
         }
         return null;
