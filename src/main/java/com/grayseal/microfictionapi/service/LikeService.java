@@ -31,7 +31,7 @@ public class LikeService {
         return like.orElse(null);
     }
 
-    public List<Like> getLikesByStoryId(Long storyId) {
+    public List<Like> findLikesByStoryId(Long storyId) {
         return likeRepository.findByStoryId(storyId);
     }
 

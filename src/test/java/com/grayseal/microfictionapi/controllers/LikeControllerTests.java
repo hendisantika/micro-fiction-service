@@ -21,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
@@ -152,6 +154,63 @@ public class LikeControllerTests {
         lenient().when(likeService.findLikeById(1L)).thenReturn(null);
 
         ResponseEntity<Like> response = likeController.findLikeById(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+//    @Test
+//    void shouldReturnAListOfLikesIfStoryIdIsValid() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .getForEntity("/api/likes/story/4", String.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+
+    @Test
+    void shouldReturnLikesByStoryId() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        List<Like> likes = new ArrayList<>();
+        Like like1 = new Like();
+        like1.setId(1L);
+        like1.setUserId(1L);
+        like1.setStoryId(1L);
+        likes.add(like1);
+
+        Like like2 = new Like();
+        like2.setId(2L);
+        like2.setUserId(2L);
+        like2.setStoryId(1L);
+        likes.add(like2);
+
+        when(storyService.existsById(1L)).thenReturn(true);
+        when(likeService.findLikesByStoryId(1L)).thenReturn(likes);
+
+        ResponseEntity<List<Like>> response = likeController.getLikesByStoryId(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(likes);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenStoryIdIsNull() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        ResponseEntity<List<Like>> response = likeController.getLikesByStoryId(null, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenStoryNotFound() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        when(storyService.existsById(1L)).thenReturn(false);
+
+        ResponseEntity<List<Like>> response = likeController.getLikesByStoryId(1L, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }

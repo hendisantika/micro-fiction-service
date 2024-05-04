@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/likes")
@@ -41,12 +42,23 @@ public class LikeController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Like> findLikeById(@PathVariable Long id, Principal principal) {
-        if (principal != null && id != null) {
-            Like like = likeService.findLikeById(id);
+    @GetMapping("/{likeId}")
+    public ResponseEntity<Like> findLikeById(@PathVariable Long likeId, Principal principal) {
+        if (principal != null && likeId != null) {
+            Like like = likeService.findLikeById(likeId);
             if (like != null) {
                 return ResponseEntity.ok(like);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/story/{storyId}")
+    public ResponseEntity<List<Like>> getLikesByStoryId(@PathVariable Long storyId, Principal principal) {
+        if (principal != null && storyId != null) {
+            if (storyService.existsById(storyId)) {
+                List<Like> likes = likeService.findLikesByStoryId(storyId);
+                return ResponseEntity.ok(likes);
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
