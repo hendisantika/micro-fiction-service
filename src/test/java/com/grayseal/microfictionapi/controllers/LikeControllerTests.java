@@ -109,4 +109,50 @@ public class LikeControllerTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+
+//    @Test
+//    void ShouldReturnLikeIfIdIsValid() {
+//        ResponseEntity<Like> response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .getForEntity("/api/likes/1", Like.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+
+    @Test
+    void shouldReturnLikeIfIdIsValid() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        Like like = new Like();
+        like.setId(1L);
+        like.setUserId(1L);
+        like.setStoryId(1L);
+        when(likeService.findLikeById(1L)).thenReturn(like);
+
+        ResponseEntity<Like> response = likeController.findLikeById(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(like);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenIdIsNull() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        ResponseEntity<Like> response = likeController.findLikeById(null, principal);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenLikeNotFound() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        lenient().when(likeService.findLikeById(1L)).thenReturn(null);
+
+        ResponseEntity<Like> response = likeController.findLikeById(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
 }

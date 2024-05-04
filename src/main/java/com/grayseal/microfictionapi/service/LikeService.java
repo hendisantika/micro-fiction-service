@@ -26,7 +26,7 @@ public class LikeService {
         return null;
     }
 
-    public Like getLikeById(Long likeId) {
+    public Like findLikeById(Long likeId) {
         Optional<Like> like = likeRepository.findById(likeId);
         return like.orElse(null);
     }

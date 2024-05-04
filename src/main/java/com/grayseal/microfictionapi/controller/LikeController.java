@@ -41,4 +41,15 @@ public class LikeController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Like> findLikeById(@PathVariable Long id, Principal principal) {
+        if (principal != null && id != null) {
+            Like like = likeService.findLikeById(id);
+            if (like != null) {
+                return ResponseEntity.ok(like);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
 }
