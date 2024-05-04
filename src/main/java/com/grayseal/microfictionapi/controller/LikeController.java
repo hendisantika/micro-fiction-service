@@ -64,4 +64,15 @@ public class LikeController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Like>> getLikesByUserId(@PathVariable Long userId, Principal principal) {
+        if (principal != null && userId != null) {
+            if (userService.existsById(userId)) {
+                List<Like> likes = likeService.findLikesByUserId(userId);
+                return ResponseEntity.ok(likes);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
 }
