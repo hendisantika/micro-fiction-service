@@ -18,6 +18,15 @@ public class Like {
     @Schema(description = "The ID of the story that was liked")
     private Long storyId;
 
+    public Like() {
+    }
+
+    public Like(Long id, Long userId, Long storyId) {
+        this.id = id;
+        this.userId = userId;
+        this.storyId = storyId;
+    }
+
     public Long getUserId() {
         return userId;
     }
