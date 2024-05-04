@@ -58,14 +58,20 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "Comment found", content = @Content(schema = @Schema(implementation = Comment.class)))
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<Comment> findCommentById(@PathVariable Long commentId, Principal principal) {
-        return ResponseEntity.ok(new Comment());
+        if (principal != null && commentId != null) {
+            Comment comment = commentService.findCommentById(commentId);
+            if (comment != null) {
+                return ResponseEntity.ok(comment);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @Operation(summary = "Retrieve comments by story ID")
     @GetMapping("/story/{storyId}")
     @ApiResponse(responseCode = "200", description = "Comments found", content = @Content(schema = @Schema(implementation = List.class)))
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    public ResponseEntity<List<Comment>> getCommentsByStoryId(@PathVariable Long storyId, Principal principal) {
+    public ResponseEntity<List<Comment>> findCommentsByStoryId(@PathVariable Long storyId, Principal principal) {
         return ResponseEntity.ok(new ArrayList<>());
     }
 

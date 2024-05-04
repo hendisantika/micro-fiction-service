@@ -101,4 +101,50 @@ public class CommentControllerTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+
+//    @Test
+//    void shouldFetchCommentIfCommentIdIsValid() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .getForEntity("/api/comments/1", Comment.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+
+    @Test
+    void shouldReturnCommentIfIdIsValid() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        Comment comment = new Comment();
+        comment.setId(1L);
+
+        when(commentService.findCommentById(1L)).thenReturn(comment);
+
+        ResponseEntity<Comment> response = commentController.findCommentById(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(comment);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenIdIsNull() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        ResponseEntity<Comment> response = commentController.findCommentById(null, principal);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenCommentNotFound() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        when(commentService.findCommentById(1L)).thenReturn(null);
+
+        ResponseEntity<Comment> response = commentController.findCommentById(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
 }
