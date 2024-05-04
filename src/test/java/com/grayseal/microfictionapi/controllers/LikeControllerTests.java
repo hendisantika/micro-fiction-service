@@ -187,7 +187,7 @@ public class LikeControllerTests {
         when(storyService.existsById(1L)).thenReturn(true);
         when(likeService.findLikesByStoryId(1L)).thenReturn(likes);
 
-        ResponseEntity<List<Like>> response = likeController.getLikesByStoryId(1L, principal);
+        ResponseEntity<List<Like>> response = likeController.findLikesByStoryId(1L, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(likes);
@@ -198,7 +198,7 @@ public class LikeControllerTests {
         Principal principal = mock(Principal.class);
         lenient().when(principal.getName()).thenReturn("test@gmail.com");
 
-        ResponseEntity<List<Like>> response = likeController.getLikesByStoryId(null, principal);
+        ResponseEntity<List<Like>> response = likeController.findLikesByStoryId(null, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
@@ -210,7 +210,7 @@ public class LikeControllerTests {
 
         when(storyService.existsById(1L)).thenReturn(false);
 
-        ResponseEntity<List<Like>> response = likeController.getLikesByStoryId(1L, principal);
+        ResponseEntity<List<Like>> response = likeController.findLikesByStoryId(1L, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
@@ -244,7 +244,7 @@ public class LikeControllerTests {
         when(userService.existsById(1L)).thenReturn(true);
         when(likeService.findLikesByUserId(1L)).thenReturn(likes);
 
-        ResponseEntity<List<Like>> response = likeController.getLikesByUserId(1L, principal);
+        ResponseEntity<List<Like>> response = likeController.findLikesByUserId(1L, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(likes);
@@ -255,7 +255,7 @@ public class LikeControllerTests {
         Principal principal = mock(Principal.class);
         lenient().when(principal.getName()).thenReturn("test@gmail.com");
 
-        ResponseEntity<List<Like>> response = likeController.getLikesByUserId(null, principal);
+        ResponseEntity<List<Like>> response = likeController.findLikesByUserId(null, principal);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
