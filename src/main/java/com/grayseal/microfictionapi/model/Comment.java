@@ -21,6 +21,16 @@ public class Comment {
     @Schema(description = "The ID of the story associated with the comment")
     private Long storyId;
 
+    public Comment(Long id, String content, Long userId, Long storyId) {
+        this.id = id;
+        this.content = content;
+        this.userId = userId;
+        this.storyId = storyId;
+    }
+
+    public Comment() {
+    }
+
     public String getContent() {
         return content;
     }
