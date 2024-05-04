@@ -259,4 +259,48 @@ public class LikeControllerTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+
+//    @Test
+//    void shouldDeleteAlikeSuccessfully() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .exchange("/api/likes/1", HttpMethod.DELETE, null, Void.class);
+//
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+//    }
+
+    @Test
+    void shouldDeleteLikeSuccessfully() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        User user = new User();
+        user.setId(1L);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+
+        Like like = new Like();
+        like.setId(1L);
+        like.setUserId(1L);
+        when(likeService.findLikeById(1L)).thenReturn(like);
+
+        ResponseEntity<Void> response = likeController.deleteLike(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenLikeNotFound() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        User user = new User();
+        user.setId(1L);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+
+        lenient().when(likeService.findLikeById(1L)).thenReturn(null);
+
+        ResponseEntity<Void> response = likeController.deleteLike(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
 }

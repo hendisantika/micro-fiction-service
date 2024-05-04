@@ -75,4 +75,18 @@ public class LikeController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @DeleteMapping("/{likeId}")
+    public ResponseEntity<Void> deleteLike(@PathVariable Long likeId, Principal principal) {
+        if (principal != null && likeId != null) {
+            User user = userService.findUserByEmail(principal.getName());
+            Like like = likeService.findLikeById(likeId);
+            if (like != null && user != null) {
+                if (like.getUserId().equals(user.getId())) {
+                    likeService.deleteLike(likeId);
+                    return ResponseEntity.noContent().build();
+                }
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
