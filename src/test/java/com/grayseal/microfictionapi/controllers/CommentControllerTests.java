@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
@@ -147,4 +149,58 @@ public class CommentControllerTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
+//    @Test
+//    void shouldReturnAListOfCommentsGivenTheStoryId() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .getForEntity("/api/comments/story/1", String.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+
+    @Test
+    void shouldReturnCommentsByStoryId() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        List<Comment> comments = new ArrayList<>();
+        Comment comment1 = new Comment();
+        comment1.setId(1L);
+        comment1.setStoryId(1L);
+        comments.add(comment1);
+
+        Comment comment2 = new Comment();
+        comment2.setId(2L);
+        comment2.setStoryId(1L);
+        comments.add(comment2);
+
+        when(storyService.existsById(1L)).thenReturn(true);
+        when(commentService.findCommentsByStoryId(1L)).thenReturn(comments);
+
+        ResponseEntity<List<Comment>> response = commentController.findCommentsByStoryId(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(comments);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenStoryIdIsNull() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        ResponseEntity<List<Comment>> response = commentController.findCommentsByStoryId(null, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenStoryNotFound() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        when(storyService.existsById(1L)).thenReturn(false);
+
+        ResponseEntity<List<Comment>> response = commentController.findCommentsByStoryId(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
 }

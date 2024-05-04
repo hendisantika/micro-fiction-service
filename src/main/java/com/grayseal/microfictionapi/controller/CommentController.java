@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -72,7 +71,13 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "Comments found", content = @Content(schema = @Schema(implementation = List.class)))
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<List<Comment>> findCommentsByStoryId(@PathVariable Long storyId, Principal principal) {
-        return ResponseEntity.ok(new ArrayList<>());
+        if (principal != null && storyId != null) {
+            if (storyService.existsById(storyId)) {
+                List<Comment> comments = commentService.findCommentsByStoryId(storyId);
+                return ResponseEntity.ok(comments);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 
