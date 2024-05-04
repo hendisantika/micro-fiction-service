@@ -86,6 +86,16 @@ public class CommentController {
     @ApiResponse(responseCode = "204", description = "Comment deleted successfully")
     @ApiResponse(responseCode = "404", description = "Comment not found")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId, Principal principal) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if (principal != null && commentId != null) {
+            User user = userService.findUserByEmail(principal.getName());
+            Comment comment = commentService.findCommentById(commentId);
+            if (comment != null && user != null) {
+                if (comment.getUserId().equals(user.getId())) {
+                    commentService.deleteComment(commentId);
+                    return ResponseEntity.noContent().build();
+                }
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 }

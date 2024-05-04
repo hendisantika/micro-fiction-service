@@ -203,4 +203,86 @@ public class CommentControllerTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+
+//    @Test
+//    void shouldDeleteCommentSuccessfully() {
+//        var response = restTemplate
+//                .withBasicAuth("l@gmail.com", "password")
+//                .exchange("/api/comments/1", HttpMethod.DELETE, null, Void.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+//    }
+
+    @Test
+    void shouldDeleteCommentSuccessfully() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        User user = new User();
+        user.setId(1L);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+
+        Comment comment = new Comment();
+        comment.setId(1L);
+        comment.setUserId(1L);
+        when(commentService.findCommentById(1L)).thenReturn(comment);
+
+        ResponseEntity<Void> response = commentController.deleteComment(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(commentService, times(1)).deleteComment(1L);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenCommentNotFound() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        User user = new User();
+        user.setId(1L);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+
+        lenient().when(commentService.findCommentById(1L)).thenReturn(null);
+
+        ResponseEntity<Void> response = commentController.deleteComment(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        verify(commentService, never()).deleteComment(1L);
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenCommentNotFoundWhenDeleting() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        User user = new User();
+        user.setId(1L);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+
+        lenient().when(commentService.findCommentById(1L)).thenReturn(null);
+
+        ResponseEntity<Void> response = commentController.deleteComment(1L, principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        verify(commentService, never()).deleteComment(any());
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenCommentNotBelongsToUser() {
+        Principal principal = mock(Principal.class);
+        lenient().when(principal.getName()).thenReturn("test@gmail.com");
+
+        User user = new User();
+        user.setId(1L);
+        when(userService.findUserByEmail(principal.getName())).thenReturn(user);
+
+        Comment comment = new Comment();
+        comment.setId(1L);
+        comment.setUserId(2L);
+        when(commentService.findCommentById(1L)).thenReturn(comment);
+
+        ResponseEntity<Void> response = commentController.deleteComment(comment.getId(), principal);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        verify(commentService, never()).deleteComment(any());
+    }
 }
