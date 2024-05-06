@@ -24,4 +24,3 @@ RUN mvn package -DskipTests
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "target/microfiction.jar"]
-# Trigger full rebuild
