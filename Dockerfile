@@ -1,26 +1,23 @@
-# The base image on which we would build our image
-FROM openjdk:18-jdk-alpine
-
-# Install curl and maven
-RUN apk --no-cache add curl maven
-
-# Expose port 8080
-EXPOSE 8080
+# --- Build Stage ---
+FROM amazoncorretto:21-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the pom.xml file to the working directory
+# Copy pom.xml and download dependencies
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Resolve the dependencies in the pom.xml file
-RUN mvn dependency:resolve
-
-# Copy the source code to the working directory
+# Copy the source code
 COPY src ./src
 
 # Build the project
-RUN mvn package -DskipTests
+RUN mvn package -DskipTests -B
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "target/microfiction.jar"]
+# --- Run Stage ---
+FROM amazoncorretto:21-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the JAR from
